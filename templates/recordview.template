@@ -1,0 +1,7 @@
+<div class="panel panel-default" style="margin-top: 10px;">
+  <div class="panel-heading clearfix">
+    <button name="start-new-task" type="button" class="btn btn-primary pull-right" aria-label="Add task">Start new task</button>
+  </div>
+  <ul class="list-group">
+  </ul>
+</div>

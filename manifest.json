@@ -1,0 +1,13 @@
+{
+  "name": "Logger",
+  "description": "Logger",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["scripts/background.js"],
+      "persitent": false
+    }
+  },
+  "permissions": ["storage"]
+}
