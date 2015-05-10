@@ -1,11 +1,23 @@
 define (
-  ['underscore', 'jquery', 'backbone'],
+  ['underscore', 'jquery', 'backbone', 'localstorage'],
   function (_, $, Backbone) {
     var Task = Backbone.Model.extend({
       defaults:  {
         name: 'no name',
         tags: [],
         stints: []
+      },
+
+      // Parse stringified date time data to Date object.
+      parse: function (data, option) {
+        data.stints = _.map(data.stints, function(value) {
+          return {
+            startTime: new Date(value.startTime),
+            endTime: new Date(value.endTime),
+            comment: value.comment
+          };
+        });
+        return data;
       },
 
       startStint: function () {
@@ -54,6 +66,7 @@ define (
     });
 
     var TaskList = Backbone.Collection.extend({
+      localStorage: new Backbone.LocalStorage("Tasks"),
       model: Task,
       stopAllStints: function () {
         this.each(function (task) {

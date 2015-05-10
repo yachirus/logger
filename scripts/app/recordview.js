@@ -8,10 +8,9 @@ define (
       },
 
       initialize: function () {
-        // Test code
-        this.render();
-
         this.listenTo(this.model, 'stop-all-stints', this.stopAllStints);
+        this.listenTo(this.model, 'sync', this.render);
+        this.model.fetch();
       },
 
       render: function () {
@@ -55,6 +54,7 @@ define (
         });
 
         this.model.unshift(newTask);
+        newTask.save();
 
         newTask.startStint();
         this.render();
@@ -95,12 +95,14 @@ define (
         var tags = this.model.get('tags').concat(tagsString.split(' '));
         tags = _.uniq(tags);
         this.model.set({ tags: tags });
+        this.model.save();
       },
 
       removeTag: function (event) {
         var tagRemoving = this.$(event.target).attr('data-tag-name');
         var tags = _.without(this.model.get('tags'), tagRemoving);
         this.model.set({ tags: tags });
+        this.model.save();
       },
 
       formatSummation: function(summation){
@@ -135,6 +137,7 @@ define (
       stopStint: function () {
         var comment = this.$el.find('input[name=comment]').val();
         this.model.stopStint(comment);
+        this.model.save();
       },
 
       discardStint: function () {

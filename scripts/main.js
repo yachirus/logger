@@ -6,6 +6,7 @@ requirejs.config({
     templates: '../templates',
 
     backbone: 'lib/backbone',
+    localstorage: "lib/backbone.localStorage",
     bootstrap: 'lib/bootstrap',
     hogan: 'lib/hogan-3.0.2.amd',
     jquery: 'lib/jquery-1.11.2',
