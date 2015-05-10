@@ -52,6 +52,28 @@ function result(object, property) {
     return (typeof value === 'function') ? object[property]() : value;
 }
 
+chromeStorage = {
+  QUOTA_BYTES: chrome.storage.local.QUOTA_BYTES,
+
+  getItem: function(key, callback) {
+    chrome.storage.local.get(key, callback);
+  },
+
+  setItem: function(key, value, callback) {
+    var item = {};
+    item[key] = value;
+    chrome.storage.local.set(item, callback);
+  },
+
+  removeItem: function(key, callback) {
+    chrome.storage.local.remove(key, callback);
+  },
+
+  clear: function(callback) {
+    chrome.storage.local.clear(callback);
+  }
+};
+
 // Our Store is represented by a single JS object in *localStorage*. Create it
 // with a meaningful name, like the name you'd give a table.
 // window.Store is deprectated, use Backbone.LocalStorage instead
@@ -69,8 +91,11 @@ Backbone.LocalStorage = window.Store = function(name, serializer) {
       return data && JSON.parse(data);
     }
   };
-  var store = this.localStorage().getItem(this.name);
-  this.records = (store && store.split(",")) || [];
+
+  var ctx = this;
+  var store = this.localStorage().getItem(this.name, function (item) {
+    ctx.records = (item[ctx.name] && item[ctx.name].split(",")) || [];
+  });
 };
 
 extend(Backbone.LocalStorage.prototype, {
@@ -82,7 +107,7 @@ extend(Backbone.LocalStorage.prototype, {
 
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
   // have an id of it's own.
-  create: function(model) {
+  create: function(model, options, dfd) {
     if (!model.id && model.id !== 0) {
       model.id = guid();
       model.set(model.idAttribute, model.id);
@@ -90,38 +115,65 @@ extend(Backbone.LocalStorage.prototype, {
     this.localStorage().setItem(this._itemName(model.id), this.serializer.serialize(model));
     this.records.push(model.id.toString());
     this.save();
-    return this.find(model);
+    this.find(model, options, dfd);
   },
 
   // Update a model by replacing its copy in `this.data`.
-  update: function(model) {
+  update: function(model, options, dfd) {
     this.localStorage().setItem(this._itemName(model.id), this.serializer.serialize(model));
     var modelId = model.id.toString();
     if (!contains(this.records, modelId)) {
       this.records.push(modelId);
       this.save();
     }
-    return this.find(model);
+    this.find(model, options, dfd);
   },
 
   // Retrieve a model from `this.data` by id.
-  find: function(model) {
-    return this.serializer.deserialize(this.localStorage().getItem(this._itemName(model.id)));
+  find: function(model, options, dfd) {
+    var serializer = this.serializer;
+
+    var key = this._itemName(model.id);
+    var callback = function (item) {
+      var resp = serializer.deserialize(item[key]);
+
+      if (options && options.success) {
+        options.success(resp);
+      }
+
+      dfd.resolve(resp);
+    };
+    this.localStorage().getItem(key, callback);
   },
 
   // Return the array of all models currently in storage.
-  findAll: function() {
-    var result = [];
-    for (var i = 0, id, data; i < this.records.length; i++) {
-      id = this.records[i];
-      data = this.serializer.deserialize(this.localStorage().getItem(this._itemName(id)));
-      if (data != null) result.push(data);
+  findAll: function(model, options, dfd) {
+    var serializer = this.serializer;
+    var callback = function (items) {
+      var result = [];
+      for (key in items) {
+        var data = serializer.deserialize(items[key]);
+        if (data != null) {
+          result.push(data);
+        }
+      }
+
+      if (options && options.success) {
+        options.success(result);
+      }
+
+      dfd.resolve(result);
     }
-    return result;
+
+    var itemNames = [];
+    for (var i = 0; i < this.records.length; i++) {
+      itemNames.push(this._itemName(this.records[i]));
+    }
+    this.localStorage().getItem(itemNames, callback);
   },
 
   // Delete a model from `this.data`, returning it.
-  destroy: function(model) {
+  destroy: function(model, dfd) {
     this.localStorage().removeItem(this._itemName(model.id));
     var modelId = model.id.toString();
     for (var i = 0, id; i < this.records.length; i++) {
@@ -130,11 +182,16 @@ extend(Backbone.LocalStorage.prototype, {
       }
     }
     this.save();
-    return model;
+
+    if (options && options.success) {
+      options.success(model);
+    }
+
+    dfd.resolve(model);
   },
 
   localStorage: function() {
-    return localStorage;
+    return chromeStorage;
   },
 
   // Clear localStorage for specific collection.
@@ -157,7 +214,7 @@ extend(Backbone.LocalStorage.prototype, {
 
   // Size of localStorage.
   _storageSize: function() {
-    return this.localStorage().length;
+    return this.localStorage().length || this.localStorage().QUOTA_BYTES;
   },
 
   _itemName: function(id) {
@@ -178,60 +235,20 @@ Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(m
     (Backbone.$.Deferred && Backbone.$.Deferred()) :
     (Backbone.Deferred && Backbone.Deferred());
 
-  try {
-
-    switch (method) {
-      case "read":
-        resp = model.id != undefined ? store.find(model) : store.findAll();
-        break;
-      case "create":
-        resp = store.create(model);
-        break;
-      case "update":
-        resp = store.update(model);
-        break;
-      case "delete":
-        resp = store.destroy(model);
-        break;
-    }
-
-  } catch(error) {
-    if (error.code === 22 && store._storageSize() === 0)
-      errorMessage = "Private browsing is unsupported";
-    else
-      errorMessage = error.message;
+  switch (method) {
+    case "read":
+      model.id != undefined ? store.find(model,options, syncDfd) : store.findAll(model, options, syncDfd);
+      break;
+    case "create":
+      store.create(model, options, syncDfd);
+      break;
+    case "update":
+      store.update(model, options, syncDfd);
+      break;
+    case "delete":
+      store.destroy(model, options, syncDfd);
+      break;
   }
-
-  if (resp) {
-    if (options && options.success) {
-      if (Backbone.VERSION === "0.9.10") {
-        options.success(model, resp, options);
-      } else {
-        options.success(resp);
-      }
-    }
-    if (syncDfd) {
-      syncDfd.resolve(resp);
-    }
-
-  } else {
-    errorMessage = errorMessage ? errorMessage
-                                : "Record Not Found";
-
-    if (options && options.error)
-      if (Backbone.VERSION === "0.9.10") {
-        options.error(model, errorMessage, options);
-      } else {
-        options.error(errorMessage);
-      }
-
-    if (syncDfd)
-      syncDfd.reject(errorMessage);
-  }
-
-  // add compatibility with $.ajax
-  // always execute callback for success and error
-  if (options && options.complete) options.complete(resp);
 
   return syncDfd && syncDfd.promise();
 };
