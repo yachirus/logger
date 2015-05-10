@@ -1,14 +1,9 @@
 <div class="row">
   <form name="task-name" class="form-inline">
     <div class="col-md-3 col-sm-3 col-xs-3">
-      {{#inEdit}}
-        <input type="text" class="form-control input-sm" placeholder="Task name" value="{{name}}">
-      {{/inEdit}}
-      {{^inEdit}}
-        <p class="form-control-static taskname">
-          {{name}}
-        </p>
-      {{/inEdit}}
+      <p class="form-control-static task-name">
+        {{name}}
+      </p>
     </div>
   </form>
   <form name="tags" class="form-inline">

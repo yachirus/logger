@@ -66,8 +66,10 @@ define (
       className: 'list-group-item',
 
       events: {
+        'submit [name=task-name]': function() { this.endEditTaskName(); return false; },
         'submit [name=tags]': function () { this.addTags(); return false; },
         'submit [name=stint]': function () { this.stopStint(); return false; },
+        'click .task-name': 'beginEditTaskName',
         'click span.remove-tag': 'removeTag',
         'click button[name=start-stint]': 'startStint',
         'click button[name=stop-stint]': 'stopStint',
@@ -88,6 +90,19 @@ define (
           },
           this.model.attributes)));
         return this;
+      },
+
+      beginEditTaskName: function() {
+        var el = Backbone.$('<input type="text" class="form-control input-sm" placeholder="Task name">');
+        el.val(this.model.get('name'));
+        this.$el.find('form[name=task-name] div').html(el);
+      },
+
+      endEditTaskName: function() {
+        var newName = this.$el.find('form[name=task-name] input').val();
+        this.model.set({name: newName});
+        this.model.save();
+        this.render();
       },
 
       addTags: function () {
