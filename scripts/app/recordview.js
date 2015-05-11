@@ -161,7 +161,6 @@ define (
     });
 
     return {
-      'RecordView': RecordView,
-      'TaskView': TaskView,
+      'RecordView': RecordView
     };
   });
