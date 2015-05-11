@@ -10,7 +10,7 @@ define (
       initialize: function () {
         this.listenTo(this.model, 'stop-all-stints', this.stopAllStints);
         this.listenTo(this.model, 'sync', this.render);
-        this.model.fetch();
+        this.render();
       },
 
       render: function () {
