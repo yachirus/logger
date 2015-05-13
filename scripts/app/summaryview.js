@@ -27,6 +27,7 @@ define (
       className: 'panel panel-default',
 
       events: {
+        'click button[name=remove-stint]': 'removeStint',
       },
 
       initialize: function() {
@@ -47,6 +48,7 @@ define (
               totalTime.add(duration);
 
               return {
+                index: index,
                 startTime: startMoment.format('YYYY/M/D HH:mm:ss'),
                 endTime: endMoment.format(startMoment.isSame(endMoment, 'day') ? 'HH:mm:ss' : 'YYYY/M/D HH:mm:ss'),
                 duration: duration.humanize(),
@@ -60,6 +62,14 @@ define (
         _.extend(task, {totalTime: totalTime.humanize()});
         this.$el.html(t.summarytask(task));
         return this;
+      },
+
+      removeStint: function(event) {
+        var index = Backbone.$(event.currentTarget).attr('data-index');
+        var stints = _.clone(this.model.get('stints'));
+        stints.splice(index, 1);
+        this.model.set({ 'stints': stints });
+        this.model.save();
       }
     });
 

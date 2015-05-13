@@ -14,12 +14,7 @@
     <table class="table">
       {{#stints}}
         <tr>
-          <!--<td>
-            <button type="button" class="btn btn-xs btn-danger">
-              <span class="glyphicon glyphicon-trash"></span>
-            </button>
-          </td>-->
-          <td>
+          <td style="width: 50%;">
             {{startTime}} ~ {{endTime}}
           </td>
           <td>
@@ -27,6 +22,11 @@
           </td>
           <td>
             {{comment}}
+          </td>
+          <td class="clearfix">
+            <button type="button" name="remove-stint" data-index="{{index}}" class="btn btn-xs btn-danger pull-right">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
           </td>
         </tr>
       {{/stints}}

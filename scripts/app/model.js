@@ -37,7 +37,7 @@ define (
         currentStint.comment = comment || '';
         this.set({ currentStint: currentStint });
 
-        var stints = this.get('stints');
+        var stints = _.clone(this.get('stints'));
         stints.push(currentStint);
         this.set({ stints: stints })
 
