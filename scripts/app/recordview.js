@@ -19,7 +19,7 @@ define (
         // Test code
         this.model.each(function (task) {
           var view = new TaskView({model: task});
-          this.$el.find('ul').append(view.render().el);
+          this.$el.find('table').append(view.render().el);
 
           if (task.isStintStarted()) {
             view.countup();
@@ -62,18 +62,17 @@ define (
     });
 
     var TaskView = Backbone.View.extend({
-      tagName: 'li',
-      className: 'list-group-item',
+      tagName: 'tr',
 
       events: {
-        'submit [name=task-name]': function() { this.endEditTaskName(); return false; },
-        'submit [name=tags]': function () { this.addTags(); return false; },
-        'submit [name=stint]': function () { this.stopStint(); return false; },
-        'click .task-name': 'beginEditTaskName',
-        'click span.remove-tag': 'removeTag',
+        'click button[name=edit-task]': 'beginEditTask',
+        'click button[name=edit-done]': function () { this.endEditTask(true); },
+        'click button[name=edit-cancel]': function () { this.endEditTask(false); },
+        'keydown form[name=task-name-tags] input': 'keyDown',
         'click button[name=start-stint]': 'startStint',
         'click button[name=stop-stint]': 'stopStint',
         'click button[name=discard-stint]': 'discardStint',
+        'submit [name=stint]': function () { this.stopStint(); return false; },
       },
 
       initialize: function () {
@@ -81,43 +80,51 @@ define (
         this.listenTo(this.model, 'destroy', this.remove);
       },
 
-      render: function () {
+      render: function (options) {
         var formatString = this.formatSummation(this.model.summateStints());
-        this.$el.html(t['record'](_.extend(
-          {
-            duration: formatString,
-            isStintStarted: this.model.isStintStarted(),
-          },
-          this.model.attributes)));
+
+        options = _.extend({
+          duration: formatString,
+          isStintStarted: this.model.isStintStarted(),
+        }, options);
+
+        this.$el.html(t['record'](_.extend(options, this.model.attributes)));
         return this;
       },
 
-      beginEditTaskName: function() {
-        var el = Backbone.$('<input type="text" class="form-control input-sm" placeholder="Task name">');
-        el.val(this.model.get('name'));
-        this.$el.find('form[name=task-name] div').html(el);
+      beginEditTask: function() {
+        this.render({inEdit: true});
       },
 
-      endEditTaskName: function() {
-        var newName = this.$el.find('form[name=task-name] input').val();
-        this.model.set({name: newName});
-        this.model.save();
+      endEditTask: function(done) {
+        if (done) {
+          var name = this.$el.find('input[name=name]').val();
+
+          var tagsString = this.$('input[name=tags]').val();
+          var tags = tagsString.split(' ');
+          tags = _.uniq(tags);
+
+          this.model.set({
+            name: name,
+            tags: tags
+          });
+          this.model.save();
+        }
         this.render();
       },
 
-      addTags: function () {
-        var tagsString = this.$('input[name=tags]').val();
-        var tags = this.model.get('tags').concat(tagsString.split(' '));
-        tags = _.uniq(tags);
-        this.model.set({ tags: tags });
-        this.model.save();
-      },
-
-      removeTag: function (event) {
-        var tagRemoving = this.$(event.target).attr('data-tag-name');
-        var tags = _.without(this.model.get('tags'), tagRemoving);
-        this.model.set({ tags: tags });
-        this.model.save();
+      keyDown: function(event) {
+        switch (event.keyCode)
+        {
+          case 13:
+            this.endEditTask(true);
+            break;
+          case 27:
+            this.endEditTask(false);
+            break;
+          default:
+            break;
+        }
       },
 
       formatSummation: function(summation){

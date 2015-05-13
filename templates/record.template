@@ -1,38 +1,57 @@
-<div class="row">
-  <form name="task-name" class="form-inline">
-    <div class="col-md-3 col-sm-3 col-xs-3">
-      <p class="form-control-static task-name">
-        {{name}}
-      </p>
-    </div>
-  </form>
-  <form name="tags" class="form-inline">
-    <div class="col-md-4 col-sm-4 col-xs-4">
-      <p class="form-control-static">
+<td style="width: 50%">
+  <form name="task-name-tags" class="form-inline">
+    {{^inEdit}}
+    <p class="form-control-static">
+      <span style="margin-right: 10px;">{{name}}</span>
       {{#tags}}
-        <span class="label label-default">{{.}} <span class="remove-tag" data-tag-name="{{.}}">&times;</span></span>
+      <span class="label label-default">{{.}}</span>
       {{/tags}}
-      </p>
-      <input type="text" name="tags" class="form-control input-sm" placeholder="Tags">
-    </div>
+    </p>
+    {{/inEdit}}
+    {{#inEdit}}
+    <input type="text" name="name" class="form-control input-sm" placeholder="Task name" value="{{name}}">
+    <input type="text" name="tags" class="form-control input-sm" placeholder="Tags" value="{{#tags}}{{.}} {{/tags}}">
+    {{/inEdit}}
   </form>
+</td>
+<td>
   <form name="stint" class="form-inline">
-    <div class="col-md-5 col-sm-5 col-xs-5">
-        <p class="form-control-static duration" style="margin-right: 4px;">{{duration}}</p>
-        {{#isStintStarted}}
-          <button type="button" name="stop-stint" class="btn btn-sm btn-success">
-            <span class="glyphicon glyphicon-stop"></span>
-          </button>
-          <button type="button" name="discard-stint" class="btn btn-sm btn-danger">
-            <span class="glyphicon glyphicon-trash"></span>
-          </button>
-          <input type="text" name="comment" class="form-control input-sm" placeholder="Comment">
-        {{/isStintStarted}}
-        {{^isStintStarted}}
-          <button type="button" name="start-stint" class="btn btn-sm btn-default">
-            <span class="glyphicon glyphicon-play"></span>
-          </button>
-        {{/isStintStarted}}
+    <p class="form-control-static duration" style="margin-right: 4px;">{{duration}}</p>
+    {{#isStintStarted}}
+    <div class="form-group">
+      <button type="button" name="stop-stint" class="btn btn-sm btn-success">
+        <span class="glyphicon glyphicon-stop"></span>
+      </button>
+      <button type="button" name="discard-stint" class="btn btn-sm btn-danger">
+        <span class="glyphicon glyphicon-trash"></span>
+      </button>
     </div>
+    <input type="text" name="comment" class="form-control input-sm" placeholder="Comment">
+    {{/isStintStarted}}
+    {{^isStintStarted}}
+    <button type="button" name="start-stint" class="btn btn-sm btn-default">
+      <span class="glyphicon glyphicon-play"></span>
+    </button>
+    {{/isStintStarted}}
   </form>
-</div>
+</td>
+<td>
+  {{^inEdit}}
+  <div class="pull-right">
+  <button type="button" name="edit-task" data-index="{{index}}" class="btn btn-sm">
+    <span class="glyphicon glyphicon-pencil"></span>
+  </button>
+  <button type="button" name="remove-task" data-index="{{index}}" class="btn btn-sm btn-danger">
+    <span class="glyphicon glyphicon-trash"></span>
+  </button>
+  {{/inEdit}}
+  {{#inEdit}}
+  <div class="pull-right">
+  <button type="button" name="edit-done" data-index="{{index}}" class="btn btn-sm btn-success">
+    <span class="glyphicon glyphicon-ok"></span>
+  </button>
+  <button type="button" name="edit-cancel" data-index="{{index}}" class="btn btn-sm btn-danger">
+    <span class="glyphicon glyphicon-remove"></span>
+  </button>
+  {{/inEdit}}
+</td>

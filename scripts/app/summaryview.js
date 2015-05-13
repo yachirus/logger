@@ -27,7 +27,8 @@ define (
       className: 'panel panel-default',
 
       events: {
-        'click button[name=remove-stint]': 'removeStint',
+        'click button[name=edit-stint]': 'startEditStint',
+        'click button[name=remove-stint]': 'removeStint'
       },
 
       initialize: function() {
