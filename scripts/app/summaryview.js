@@ -27,7 +27,9 @@ define (
       className: 'panel panel-default',
 
       events: {
-        'click button[name=edit-stint]': 'startEditStint',
+        'click button[name=edit-stint]': 'beginEditStint',
+        'click button[name=edit-done]': 'endEditStint',
+        'click button[name=edit-cancel]': 'render',
         'click button[name=remove-stint]': 'removeStint'
       },
 
@@ -36,7 +38,7 @@ define (
         //this.listenTo(this.model, 'destroy', this.remove);
       },
 
-      render: function() {
+      render: function(options) {
         var totalTime = moment.duration();
 
         var task = _.mapObject(this.model.attributes, function(val, key) {
@@ -45,13 +47,20 @@ define (
               var startMoment = moment(item.startTime);
               var endMoment = moment(item.endTime);
               var duration = moment.duration(item.endTime - item.startTime);
+              var inEdit = options ? (options.editIndex == index ? true : false) : false;
 
+              var formatStringStart = formatStringEnd = "YYYY-MM-DDTHH:mm:ss";
+              if (!inEdit) {
+                formatStringStart = 'YYYY/M/D HH:mm:ss';
+                formatStringEnd = startMoment.isSame(endMoment, 'day') ? 'HH:mm:ss' : 'YYYY/M/D HH:mm:ss';
+              }
               totalTime.add(duration);
 
               return {
                 index: index,
-                startTime: startMoment.format('YYYY/M/D HH:mm:ss'),
-                endTime: endMoment.format(startMoment.isSame(endMoment, 'day') ? 'HH:mm:ss' : 'YYYY/M/D HH:mm:ss'),
+                inEdit: inEdit,
+                startTime: startMoment.format(formatStringStart),
+                endTime: endMoment.format(formatStringEnd),
                 duration: duration.humanize(),
                 comment: item.comment
               };
@@ -63,6 +72,41 @@ define (
         _.extend(task, {totalTime: totalTime.humanize()});
         this.$el.html(t.summarytask(task));
         return this;
+      },
+
+      beginEditStint: function(event) {
+        var index = Backbone.$(event.currentTarget).attr('data-index');
+        this.render({editIndex: index});
+      },
+
+      endEditStint: function(event) {
+        var index = Backbone.$(event.currentTarget).attr('data-index');
+        var stints = _.chain(this.model.get('stints'))
+        .clone().map(function(item) {
+          return _.clone(item);
+        }).value();
+
+        var startTime = Backbone.$('input[name=start-time]').val();
+        var endTime = Backbone.$('input[name=end-time]').val();
+        var comment = Backbone.$('input[name=comment]').val();
+
+        stints[index].startTime = moment(startTime).toDate();
+        stints[index].endTime = moment(endTime).toDate();
+        stints[index].comment = comment;
+
+        if (_.isEqual(stints, this.model.get('stints'))) {
+          this.discardEditStint();
+        } else {
+          stints = _.sortBy(stints, function(item) {
+            return -1 * item.startTime.getTime();
+          });
+          this.model.set({ 'stints': stints });
+          this.model.save();
+        }
+      },
+
+      discardEditStint: function() {
+        this.render();
       },
 
       removeStint: function(event) {

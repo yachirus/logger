@@ -14,13 +14,28 @@
     <table class="table">
       {{#stints}}
         <tr>
-          <td style="width: 50%;">
+          <td style="width: 60%;">
+            {{^inEdit}}
             <span style="margin-right: 20px;">{{startTime}} ~ {{endTime}}</span> ({{duration}})
+            {{/inEdit}}
+            {{#inEdit}}
+            <form class="form-inline">
+              <input type="datetime-local" name="start-time" class="form-control input-sm" value="{{startTime}}">
+              <p class="form-control-static"> ~ </p>
+              <input type="datetime-local" name="end-time" class="form-control input-sm" value="{{endTime}}">
+            </form>
+            {{/inEdit}}
           </td>
           <td>
+            {{^inEdit}}
             {{comment}}
+            {{/inEdit}}
+            {{#inEdit}}
+            <input type="text" name="comment" class="form-control input-sm" value="{{comment}}">
+            {{/inEdit}}
           </td>
           <td class="clearfix">
+            {{^inEdit}}
             <div class="pull-right">
             <button type="button" name="edit-stint" data-index="{{index}}" class="btn btn-xs">
               <span class="glyphicon glyphicon-pencil"></span>
@@ -28,6 +43,16 @@
             <button type="button" name="remove-stint" data-index="{{index}}" class="btn btn-xs btn-danger">
               <span class="glyphicon glyphicon-trash"></span>
             </button>
+            {{/inEdit}}
+            {{#inEdit}}
+            <div class="pull-right">
+            <button type="button" name="edit-done" data-index="{{index}}" class="btn btn-xs btn-success">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button type="button" name="edit-cancel" data-index="{{index}}" class="btn btn-xs btn-danger">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            {{/inEdit}}
           </div>
           </td>
         </tr>

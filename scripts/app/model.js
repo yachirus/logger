@@ -38,7 +38,7 @@ define (
         this.set({ currentStint: currentStint });
 
         var stints = _.clone(this.get('stints'));
-        stints.push(currentStint);
+        stints.unshift(currentStint);
         this.set({ stints: stints })
 
         this.unset('currentStint');
