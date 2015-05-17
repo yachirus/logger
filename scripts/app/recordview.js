@@ -102,7 +102,7 @@ define (
 
           var tagsString = this.$('input[name=tags]').val();
           var tags = tagsString.split(' ');
-          tags = _.uniq(tags);
+          tags = _.chain(tags).uniq().compact().value();
 
           this.model.set({
             name: name,

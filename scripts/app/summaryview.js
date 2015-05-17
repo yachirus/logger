@@ -27,10 +27,11 @@ define (
       className: 'panel panel-default',
 
       events: {
+        'click button[name=move-stint]': 'moveStint',
         'click button[name=edit-stint]': 'beginEditStint',
+        'click button[name=remove-stint]': 'removeStint',
         'click button[name=edit-done]': 'endEditStint',
-        'click button[name=edit-cancel]': 'render',
-        'click button[name=remove-stint]': 'removeStint'
+        'click button[name=edit-cancel]': 'render'
       },
 
       initialize: function() {
@@ -107,6 +108,50 @@ define (
 
       discardEditStint: function() {
         this.render();
+      },
+
+      moveStint: function(event) {
+        var dialog = Backbone.$(t.movestintdialog());
+        dialog.on('hidden.bs.modal', function () {
+          dialog.remove();
+        })
+
+        var model = this.model;
+        dialog.find('button[name=move]').on('click', function (e) {
+          var targetName = dialog.find('input[name=target]').val();
+          var target = model.collection.find(function(item) {
+            return item.get('name') == targetName;
+          });
+
+          if (target) {
+            var index = Backbone.$(event.currentTarget).attr('data-index');
+            var stints = _.clone(model.get('stints'));
+            var stint = stints.splice(index, 1)[0];
+            model.set({ 'stints': stints });
+            model.save();
+
+            var targetStints = _.clone(target.get('stints'));
+            targetStints.push(stint);
+            targetStints = _.sortBy(targetStints, function(item) {
+              return -1 * item.startTime.getTime();
+            });
+
+            target.set({ 'stints': targetStints });
+            target.save();
+
+            dialog.modal('hide');
+          } else {
+            dialog.find('.form-group').addClass('has-error');
+            dialog.find('span.help-block').text('Task "' + targetName + '" is not found.');
+          }
+        })
+
+        /*dialog.find('input').typeahead({}, {
+          source: function() { return ['hoge', 'fuga']; }
+        });*/
+
+        Backbone.$('body').append(dialog);
+        Backbone.$('#move-stint-dialog').modal();
       },
 
       removeStint: function(event) {

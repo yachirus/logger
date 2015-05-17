@@ -1,6 +1,6 @@
 define(
-  ['underscore', 'jquery', 'bootstrap', 'app/model', 'app/recordview', 'app/summaryview'],
-  function (_, $, bootstrap, model, recordview, summaryview) {
+  ['underscore', 'jquery', 'bootstrap', 'typeahead', 'app/model', 'app/recordview', 'app/summaryview'],
+  function (_, $, bootstrap, typeahead, model, recordview, summaryview, t) {
     taskList = new model.TaskList();
 
     // データのロード
@@ -10,7 +10,7 @@ define(
         el: $('#record-view'),
         model: taskList
       });
-      
+
       summaryView = new summaryview.SummaryView({
         el: $('#summary-view'),
         model: taskList

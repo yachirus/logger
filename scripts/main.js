@@ -11,6 +11,7 @@ requirejs.config({
     hogan: 'lib/hogan-3.0.2.amd',
     jquery: 'lib/jquery-1.11.2',
     moment: 'lib/moment',
+    typeahead: 'lib/typeahead',
     underscore: 'lib/underscore'
   },
   shim: {
