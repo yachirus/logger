@@ -6,7 +6,7 @@
         <h4 class="modal-title" id="myModalLabel">Move stint to...</h4>
       </div>
       <div class="modal-body">
-        <div class="form-group">
+        <div class="form-group clearfix">
           <input type="text" class="form-control" name="target">
           <span class="help-block"></span>
         </div>

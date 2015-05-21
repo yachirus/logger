@@ -1,6 +1,6 @@
 define (
-  ['underscore', 'backbone', 'moment', 'app/model', 'templates/templates'],
-  function (_, Backbone, moment, model, t) {
+  ['underscore', 'backbone', 'moment', 'bloodhound', 'app/model', 'templates/templates'],
+  function (_, Backbone, moment, Bloodhound, model, t) {
     var SummaryView = Backbone.View.extend({
 
       events: {
@@ -144,13 +144,30 @@ define (
             dialog.find('.form-group').addClass('has-error');
             dialog.find('span.help-block').text('Task "' + targetName + '" is not found.');
           }
-        })
-
-        /*dialog.find('input').typeahead({}, {
-          source: function() { return ['hoge', 'fuga']; }
-        });*/
+        });
 
         Backbone.$('body').append(dialog);
+
+        var taskNames = this.model.collection.chain().map(function(item) {
+          return item.get('name');
+        }).reject(function(name) {
+          return name == this.model.get('name');
+        }, this).value();
+
+        taskNames = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.whitespace,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          local: taskNames
+        });
+
+        Backbone.$('#move-stint-dialog input').typeahead({
+          hint: true,
+          highlight: true,
+        }, {
+          name: 'task-names',
+          source: taskNames
+        });
+
         Backbone.$('#move-stint-dialog').modal();
       },
 

@@ -6,6 +6,7 @@ requirejs.config({
     templates: '../templates',
 
     backbone: 'lib/backbone',
+    bloodhound: 'lib/typeahead',
     localstorage: "lib/backbone.localStorage",
     bootstrap: 'lib/bootstrap',
     hogan: 'lib/hogan-3.0.2.amd',
