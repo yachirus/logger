@@ -7,20 +7,19 @@ define (
       },
 
       initialize: function() {
-        this.render();
-      },
-
-      render: function() {
         this.$el.html(t.summaryview());
-
-        // Test code
-        this.model.each(function (task) {
-          var view = new TaskView({model: task});
-          this.$el.find('div.panel-group').append(view.render().el);
-        }, this);
-
-        return this;
+        this.listenTo(this.model, 'add', this.add);
+        this.listenTo(this.model, 'reset', this.reset);
       },
+
+      add: function(task) {
+        var view = new TaskView({model: task});
+        this.$el.find('div.panel-group').append(view.render().el);
+      },
+
+      reset: function() {
+        this.model.each(this.add, this);
+      }
     });
 
     var TaskView = Backbone.View.extend({

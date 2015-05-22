@@ -8,25 +8,24 @@ define (
       },
 
       initialize: function () {
+        this.$el.html(t.recordview());
+        
+        this.listenTo(this.model, 'add', this.add);
+        this.listenTo(this.model, 'reset', this.reset);
         this.listenTo(this.model, 'stop-all-stints', this.stopAllStints);
-        this.listenTo(this.model, 'sync', this.render);
-        this.render();
       },
 
-      render: function () {
-        this.$el.html(t.recordview());
+      add: function(task) {
+        var view = new TaskView({model: task});
+        this.$el.find('table').append(view.render().el);
 
-        // Test code
-        this.model.each(function (task) {
-          var view = new TaskView({model: task});
-          this.$el.find('table').append(view.render().el);
+        if (task.isStintStarted()) {
+          view.countup();
+        }
+      },
 
-          if (task.isStintStarted()) {
-            view.countup();
-          }
-        }, this);
-
-        return this;
+      reset: function() {
+        this.model.each(this.add, this);
       },
 
       stopAllStints: function () {
