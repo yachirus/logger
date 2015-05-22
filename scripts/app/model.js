@@ -75,6 +75,7 @@ define (
         this.each(function (task) {
           if (task.isStintStarted()) {
             task.stopStint();
+            task.save();
           }
         });
       }

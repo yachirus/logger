@@ -12,7 +12,6 @@ define (
         
         this.listenTo(this.model, 'add', this.add);
         this.listenTo(this.model, 'reset', this.reset);
-        this.listenTo(this.model, 'stop-all-stints', this.stopAllStints);
       },
 
       add: function(task) {
@@ -26,10 +25,6 @@ define (
 
       reset: function() {
         this.model.each(this.add, this);
-      },
-
-      stopAllStints: function () {
-        this.model.stopAllStints();
       },
 
       startNewTask: function () {
@@ -151,7 +146,7 @@ define (
       },
 
       startStint: function () {
-        this.model.collection.trigger('stop-all-stints');
+        this.model.collection.stopAllStints();
 
         // Start a new stint
         this.model.startStint();
