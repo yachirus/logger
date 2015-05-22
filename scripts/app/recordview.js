@@ -9,7 +9,7 @@ define (
 
       initialize: function () {
         this.$el.html(t.recordview());
-        
+
         this.listenTo(this.model, 'add', this.add);
         this.listenTo(this.model, 'reset', this.reset);
       },

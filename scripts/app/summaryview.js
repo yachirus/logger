@@ -96,9 +96,9 @@ define (
           return _.clone(item);
         }).value();
 
-        var startTime = Backbone.$('input[name=start-time]').val();
-        var endTime = Backbone.$('input[name=end-time]').val();
-        var comment = Backbone.$('input[name=comment]').val();
+        var startTime = this.$el.find('input[name=start-time]').val();
+        var endTime = this.$el.find('input[name=end-time]').val();
+        var comment = this.$el.find('input[name=comment]').val();
 
         stints[index].startTime = moment(startTime).toDate();
         stints[index].endTime = moment(endTime).toDate();
