@@ -4,6 +4,7 @@ define (
     var SummaryView = Backbone.View.extend({
 
       events: {
+        'change select': 'changeFilter'
       },
 
       initialize: function() {
@@ -19,6 +20,12 @@ define (
 
       reset: function() {
         this.model.each(this.add, this);
+      },
+
+      changeFilter: function() {
+        this.model.each(function(task) {
+          task.trigger('change-filter', {filter: this.$el.find('select').val()});
+        }, this);
       }
     });
 
@@ -37,6 +44,7 @@ define (
       initialize: function() {
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
+        this.listenTo(this.model, 'change-filter', this.render);
       },
 
       render: function(options) {
@@ -55,11 +63,20 @@ define (
                 formatStringStart = 'YYYY/M/D HH:mm:ss';
                 formatStringEnd = startMoment.isSame(endMoment, 'day') ? 'HH:mm:ss' : 'YYYY/M/D HH:mm:ss';
               }
-              totalTime.add(duration);
+
+              var visible = true;
+              if (options && options.filter && options.filter != "all") {
+                visible = startMoment.isSame(moment(), options.filter);
+              }
+
+              if (visible) {
+                totalTime.add(duration);
+              }
 
               return {
                 index: index,
                 inEdit: inEdit,
+                visible: visible,
                 startTime: startMoment.format(formatStringStart),
                 endTime: endMoment.format(formatStringEnd),
                 duration: duration.humanize(),

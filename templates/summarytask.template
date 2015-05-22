@@ -18,6 +18,7 @@
   <div id="{{id}}" class="panel-collapse collapse in">
     <table class="table">
       {{#stints}}
+        {{#visible}}
         <tr>
           <td style="width: 60%;">
             {{^inEdit}}
@@ -63,6 +64,7 @@
             </div>
           </td>
         </tr>
+        {{/visible}}
       {{/stints}}
     </table>
   </div>
