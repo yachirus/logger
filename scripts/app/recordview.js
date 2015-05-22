@@ -52,11 +52,9 @@ define (
           stints: []
         });
 
+        newTask.startStint();
         this.model.unshift(newTask);
         newTask.save();
-
-        newTask.startStint();
-        this.render();
       }
     });
 

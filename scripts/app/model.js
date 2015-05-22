@@ -17,6 +17,9 @@ define (
             comment: value.comment
           };
         });
+
+        delete data.currentStint;
+
         return data;
       },
 
