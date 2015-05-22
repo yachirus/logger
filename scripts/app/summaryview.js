@@ -26,6 +26,7 @@ define (
       className: 'panel panel-default',
 
       events: {
+        'click button[name=activate-task]': 'activateTask',
         'click button[name=move-stint]': 'moveStint',
         'click button[name=edit-stint]': 'beginEditStint',
         'click button[name=remove-stint]': 'removeStint',
@@ -72,6 +73,15 @@ define (
         _.extend(task, {totalTime: totalTime.humanize()});
         this.$el.html(t.summarytask(task));
         return this;
+      },
+
+      activateTask: function() {
+        if (this.model.get('active')) {
+          this.model.set('active', false);
+        } else {
+          this.model.set('active', true);
+        }
+        this.model.save();
       },
 
       beginEditStint: function(event) {

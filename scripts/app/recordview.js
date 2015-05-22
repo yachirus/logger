@@ -42,6 +42,7 @@ define (
         }
 
         var newTask = new model.Task({
+          active: true,
           name: ('New Task' + (suffixNumber ? (' ' + suffixNumber) : '')),
           tags: [],
           stints: []
@@ -74,14 +75,19 @@ define (
       },
 
       render: function (options) {
-        var formatString = this.formatSummation(this.model.summateStints());
+        if (this.model.get('active')) {
+          var formatString = this.formatSummation(this.model.summateStints());
 
-        options = _.extend({
-          duration: formatString,
-          isStintStarted: this.model.isStintStarted(),
-        }, options);
+          options = _.extend({
+            duration: formatString,
+            isStintStarted: this.model.isStintStarted(),
+          }, options);
 
-        this.$el.html(t['record'](_.extend(options, this.model.attributes)));
+          this.$el.html(t['record'](_.extend(options, this.model.attributes)));
+          this.$el.show();
+        } else {
+          this.$el.hide();
+        }
         return this;
       },
 
