@@ -38,7 +38,7 @@
 <td>
   {{^inEdit}}
   <div class="pull-right">
-  <button type="button" name="edit-task" data-index="{{index}}" class="btn btn-sm">
+  <button type="button" name="edit-task" data-index="{{index}}" class="btn btn-sm btn-default">
     <span class="glyphicon glyphicon-pencil"></span>
   </button>
   <button type="button" name="remove-task" data-index="{{index}}" class="btn btn-sm btn-danger">

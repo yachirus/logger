@@ -42,10 +42,10 @@
           <td class="clearfix">
             <div class="pull-right">
               {{^inEdit}}
-              <button type="button" name="edit-stint" data-index="{{index}}" class="btn btn-xs">
+              <button type="button" name="edit-stint" data-index="{{index}}" class="btn btn-xs btn-default">
                 <span class="glyphicon glyphicon-pencil"></span>
               </button>
-              <button type="button" name="move-stint" data-index="{{index}}" class="btn btn-xs">
+              <button type="button" name="move-stint" data-index="{{index}}" class="btn btn-xs btn-default">
                 <span class="glyphicon glyphicon-share-alt"></span>
               </button>
               <button type="button" name="remove-stint" data-index="{{index}}" class="btn btn-xs btn-danger">
