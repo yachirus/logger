@@ -16,7 +16,7 @@ define (
 
       add: function(task) {
         var view = new TaskView({model: task});
-        this.$el.find('table').append(view.render().el);
+        this.$el.find('table').prepend(view.render().el);
 
         if (task.isStintStarted()) {
           view.countup();
