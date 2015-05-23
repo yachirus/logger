@@ -24,13 +24,14 @@ define (
 
       changeFilter: function() {
         this.model.each(function(task) {
-          task.trigger('change-filter', {filter: this.$el.find('select').val()});
+          task.trigger('change-filter', this.$el.find('select').val());
         }, this);
       }
     });
 
     var TaskView = Backbone.View.extend({
       className: 'panel panel-default',
+      filter: 'all',
 
       events: {
         'click button[name=activate-task]': 'activateTask',
@@ -44,7 +45,7 @@ define (
       initialize: function() {
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
-        this.listenTo(this.model, 'change-filter', this.render);
+        this.listenTo(this.model, 'change-filter', this.changeFilter);
       },
 
       render: function(options) {
@@ -65,8 +66,8 @@ define (
               }
 
               var visible = true;
-              if (options && options.filter && options.filter != "all") {
-                visible = startMoment.isSame(moment(), options.filter);
+              if (this.filter != "all") {
+                visible = startMoment.isSame(moment(), this.filter);
               }
 
               if (visible) {
@@ -82,14 +83,29 @@ define (
                 duration: duration.humanize(),
                 comment: item.comment
               };
-            });
+            }, this);
           } else {
             return val;
           }
-        });
+        }, this);
+
         _.extend(task, {totalTime: totalTime.humanize()});
         this.$el.html(t.summarytask(task));
+
+        if (_.find(task.stints, function(stint) {
+          return stint.visible;
+        })) {
+          this.$el.show();
+        } else {
+          this.$el.hide();
+        }
+
         return this;
+      },
+
+      changeFilter: function(filter) {
+        this.filter = filter;
+        this.render();
       },
 
       activateTask: function() {
