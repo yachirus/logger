@@ -83,7 +83,7 @@ define (
             isStintStarted: this.model.isStintStarted(),
           }, options);
 
-          this.$el.html(t['record'](_.extend(options, this.model.attributes)));
+          this.$el.html(t['recordtask'](_.extend(options, this.model.attributes)));
           this.$el.show();
         } else {
           this.$el.hide();
@@ -120,9 +120,11 @@ define (
         switch (event.keyCode)
         {
           case 13:
+            // Enter
             this.endEditTask(true);
             break;
           case 27:
+            // Escape
             this.endEditTask(false);
             break;
           default:
