@@ -89,7 +89,12 @@ define (
           }
         }, this);
 
-        _.extend(task, {totalTime: totalTime.humanize()});
+        _.extend(task,
+          {
+            totalTime: totalTime.humanize(),
+            collapseIn: this.$el.find('div.panel-collapse').hasClass('in')
+          });
+
         this.$el.html(t.summarytask(task));
 
         if (_.find(task.stints, function(stint) {
