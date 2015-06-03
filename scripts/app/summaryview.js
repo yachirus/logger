@@ -4,11 +4,18 @@ define (
     var SummaryView = Backbone.View.extend({
 
       events: {
-        'change select': 'changeFilter'
+        'change select[name=scale]': 'changeFilter',
+        'change input[name=base-date]': 'changeFilter'
       },
 
       initialize: function() {
-        this.$el.html(t.summaryview());
+        this.$el.html(t.summaryview({now: moment().format('YYYY-MM-DD')}));
+
+        // Hide base-date control when scale is all.
+        if (this.$el.find('select[name=scale]').val() == 'all') {
+          this.$el.find('.base-date').hide();
+        }
+
         this.listenTo(this.model, 'add', this.add);
         this.listenTo(this.model, 'reset', this.reset);
       },
@@ -23,15 +30,27 @@ define (
       },
 
       changeFilter: function() {
+        var filter = {
+          scale: this.$el.find('select[name=scale]').val(),
+          baseDate: this.$el.find('input[name=base-date]').val()
+        };
+
+        // Hide base-date control when scale is all.
+        if (filter.scale == 'all') {
+          this.$el.find('.base-date').hide();
+        } else {
+          this.$el.find('.base-date').show();
+        }
+
         this.model.each(function(task) {
-          task.trigger('change-filter', this.$el.find('select').val());
+          task.trigger('change-filter', filter);
         }, this);
       }
     });
 
     var TaskView = Backbone.View.extend({
       className: 'panel panel-default',
-      filter: 'all',
+      filter: { scale: 'all', baseDate: Date()},
 
       events: {
         'click button[name=activate-task]': 'activateTask',
@@ -66,8 +85,8 @@ define (
               }
 
               var visible = true;
-              if (this.filter != "all") {
-                visible = startMoment.isSame(moment(), this.filter);
+              if (this.filter.scale != "all") {
+                visible = startMoment.isSame(this.filter.baseDate, this.filter.scale);
               }
 
               if (visible) {

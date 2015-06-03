@@ -1,14 +1,19 @@
 <div class="panel-group" style="margin-top: 10px;">
-  <form class="form">
+  <form class="form-inline" style="margin-bottom: 10px;">
     <div class="form-group">
-      <select class="form-control">
+      <label for="scale">Scale</label>
+      <select class="form-control" name="scale">
         <option value="all" selected>All</option>
-        <option value="day">Today</option>
-        <option value="week">This week</option>
-        <option value="month">This month</option>
-        <option value="quarter">This quarter</option>
-        <option value="year">This year</option>
+        <option value="day">Daily</option>
+        <option value="week">Weekly</option>
+        <option value="month">Monthly</option>
+        <option value="quarter">Quarterly</option>
+        <option value="year">Yearly</option>
       </select>
-  </div>
+    </div>
+    <div class="form-group base-date">
+      <label for="base-date">Base date</label>
+      <input name="base-date" type="date" class="form-control" value="{{now}}">
+    </div>
   </form>
 </div>
