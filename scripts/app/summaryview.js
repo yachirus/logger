@@ -116,9 +116,8 @@ define (
 
         this.$el.html(t.summarytask(task));
 
-        if (_.find(task.stints, function(stint) {
-          return stint.visible;
-        })) {
+        var areAllStintsInvisible = _.find(task.stints, function(stint) { return stint.visible; });
+        if (areAllStintsInvisible || this.filter.scale == "all") {
           this.$el.show();
         } else {
           this.$el.hide();
