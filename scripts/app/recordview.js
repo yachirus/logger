@@ -61,6 +61,7 @@ define (
         'click button[name=edit-task]': 'beginEditTask',
         'click button[name=edit-done]': function () { this.endEditTask(true); },
         'click button[name=edit-cancel]': function () { this.endEditTask(false); },
+        'click button[name=archive-task]': 'archiveTask',
         'click button[name=remove-task]': 'removeTask',
         'keydown form[name=task-name-tags] input': 'keyDown',
         'click button[name=start-stint]': 'startStint',
@@ -114,6 +115,11 @@ define (
 
       removeTask: function() {
         this.model.destroy();
+      },
+
+      archiveTask: function () {
+        this.model.set('active', false);
+        this.model.save();
       },
 
       keyDown: function(event) {

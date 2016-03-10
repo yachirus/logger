@@ -23,7 +23,7 @@
         <span class="glyphicon glyphicon-stop"></span>
       </button>
       <button type="button" name="discard-stint" class="btn btn-sm btn-danger">
-        <span class="glyphicon glyphicon-trash"></span>
+        <span class="glyphicon glyphicon-remove"></span>
       </button>
     </div>
     <input type="text" name="comment" class="form-control input-sm" placeholder="Comment">
@@ -41,6 +41,9 @@
   <button type="button" name="edit-task" data-index="{{index}}" class="btn btn-sm btn-default">
     <span class="glyphicon glyphicon-pencil"></span>
   </button>
+  <button type="button" name="archive-task" data-index="{{index}}" class="btn btn-sm btn-default">
+    <span class="glyphicon glyphicon-download-alt"></span>
+  </button>
   <button type="button" name="remove-task" data-index="{{index}}" class="btn btn-sm btn-danger">
     <span class="glyphicon glyphicon-trash"></span>
   </button>
@@ -49,6 +52,9 @@
   <div class="pull-right">
   <button type="button" name="edit-done" data-index="{{index}}" class="btn btn-sm btn-success">
     <span class="glyphicon glyphicon-ok"></span>
+  </button>
+  <button type="button" name="archiev-task" data-index="{{index}}" class="btn btn-sm btn-default">
+    <span class="glyphicon glyphicon-download-alt"></span>
   </button>
   <button type="button" name="edit-cancel" data-index="{{index}}" class="btn btn-sm btn-danger">
     <span class="glyphicon glyphicon-remove"></span>
