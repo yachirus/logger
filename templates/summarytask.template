@@ -5,6 +5,9 @@
         {{name}}
       </a>
       ( Total {{totalTime}} )
+      {{#tags}}
+        <span class="label label-default">{{.}}</span>
+      {{/tags}}
       <button type="button" name="activate-task" class="btn btn-xs btn-default pull-right">
         {{#active}}
         <span class="glyphicon glyphicon-star"></span>
@@ -12,7 +15,7 @@
         {{^active}}
         <span class="glyphicon glyphicon-star-empty"></span>
         {{/active}}
-        </button>
+      </button>
     </h4>
   </div>
   <div id="{{id}}" class="panel-collapse collapse {{#collapseIn}}in{{/collapseIn}}">
