@@ -15,5 +15,7 @@ define(
     });
 
     // データのロード
-    taskList.fetch({reset: true});
+    taskList.localStorageReady(function () {
+      taskList.fetch({reset: true});
+    });
   });

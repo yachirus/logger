@@ -70,6 +70,9 @@ define (
 
     var TaskList = Backbone.Collection.extend({
       localStorage: new Backbone.LocalStorage("Tasks"),
+      localStorageReady: function (callback) {
+        this.localStorage.ready(callback);
+      },
       model: Task,
       stopAllStints: function () {
         this.each(function (task) {

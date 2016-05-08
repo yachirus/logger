@@ -93,9 +93,17 @@ Backbone.LocalStorage = window.Store = function(name, serializer) {
   };
 
   var ctx = this;
-  var store = this.localStorage().getItem(this.name, function (item) {
+  this.localStorage().getItem(this.name, function (item) {
     ctx.records = (item[ctx.name] && item[ctx.name].split(",")) || [];
   });
+
+  this.ready = function (callback) {
+    if (ctx.records) {
+      callback();
+    } else {
+      setTimeout(ctx.ready, 10, callback);
+    }
+  }
 };
 
 extend(Backbone.LocalStorage.prototype, {
