@@ -1,6 +1,6 @@
 define (
-  ['underscore', 'backbone', 'moment','app/model', 'templates/templates'],
-  function (_, Backbone, moment, model, t) {
+  ['underscore', 'backbone', 'jqueryui', 'moment','app/model', 'templates/templates'],
+  function (_, Backbone, jqueryui, moment, model, t) {
     var RecordView = Backbone.View.extend({
 
       events: {
@@ -10,13 +10,20 @@ define (
       initialize: function () {
         this.$el.html(t.recordview());
 
+        var self = this;
+        this.$el.find('#record-list').sortable({
+          update: function(ev, ui) {
+            self.model.reorder(self.$el.find('#record-list').sortable("toArray"));
+          }
+        });
+
         this.listenTo(this.model, 'add', this.add);
         this.listenTo(this.model, 'reset', this.reset);
       },
 
       add: function(task) {
         var view = new TaskView({model: task});
-        this.$el.find('table').prepend(view.render().el);
+        this.$el.find('#record-list').prepend(view.render().el);
 
         if (task.isStintStarted()) {
           view.countup();
@@ -24,7 +31,10 @@ define (
       },
 
       reset: function() {
-        this.model.each(this.add, this);
+        this.model.each(function (task) {
+          var view = new TaskView({model: task});
+          this.$el.find('#record-list').append(view.render().el);
+        }, this);
       },
 
       startNewTask: function () {
@@ -71,6 +81,8 @@ define (
       },
 
       initialize: function () {
+        this.$el.attr({ id: this.model.id });
+
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'destroy', this.remove);
       },

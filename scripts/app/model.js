@@ -3,6 +3,7 @@ define (
   function (_, $, Backbone) {
     var Task = Backbone.Model.extend({
       defaults:  {
+        index: 0,
         name: 'no name',
         tags: [],
         stints: []
@@ -74,6 +75,16 @@ define (
         this.localStorage.ready(callback);
       },
       model: Task,
+      comparator: 'index',
+
+      reorder: function (ids) {
+        _.each(ids, function (id, index) {
+          this.find(function (m) {
+            return m.get('id') == id;
+          }).set({ index: index }).save();
+        }, this);
+      },
+
       stopAllStints: function () {
         this.each(function (task) {
           if (task.isStintStarted()) {

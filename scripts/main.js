@@ -11,6 +11,7 @@ requirejs.config({
     bootstrap: 'lib/bootstrap',
     hogan: 'lib/hogan-3.0.2.amd',
     jquery: 'lib/jquery-1.11.2',
+    jqueryui: 'lib/jquery-ui',
     moment: 'lib/moment',
     typeahead: 'lib/typeahead',
     underscore: 'lib/underscore'

@@ -3,5 +3,6 @@
     <button name="start-new-task" type="button" class="btn btn-primary pull-right" aria-label="Add task">Start new task</button>
   </div>
   <table class="table">
+    <tbody id="record-list"></tbody>
   </table>
 </div>
